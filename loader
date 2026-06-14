@@ -1,5 +1,215 @@
-if game.PlaceId == 987654321 then
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Ronin-Studios/Ronin-Hub/refs/heads/main/Grow-A-Garden-2"))()
-else
-    print("Game Not Supported!")
+local HttpService = game:GetService("HttpService")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local CoreGui = game:GetService("CoreGui")
+
+local KEY_FILE = "roninhub_key.txt"
+local SCRIPT_URL = ""
+local WORK_INK_LINK = "https://work.ink/2DE4/ronin-hub-key-system"
+local VALIDATE_URL = "https://work.ink/_api/v2/token/isValid/"
+
+local function SaveKey(key)
+    if writefile then pcall(writefile, KEY_FILE, key) end
 end
+
+local function LoadSavedKey()
+    if isfile and readfile and isfile(KEY_FILE) then
+        local ok, val = pcall(readfile, KEY_FILE)
+        if ok and val and val:gsub("%s+", "") ~= "" then
+            return val:gsub("%s+", "")
+        end
+    end
+    return nil
+end
+
+local function ValidateKey(key)
+    if not key or key == "" then return false end
+    local ok, result = pcall(function()
+        return game:HttpGet(VALIDATE_URL .. key, true)
+    end)
+    if not ok or not result then return false end
+    local parseOk, data = pcall(function()
+        return HttpService:JSONDecode(result)
+    end)
+    return parseOk and data and data.valid == true
+end
+
+local function LoadMainScript()
+    pcall(function()
+        loadstring(game:HttpGet(SCRIPT_URL, true))()
+    end)
+end
+
+local savedKey = LoadSavedKey()
+if savedKey and ValidateKey(savedKey) then
+    LoadMainScript()
+    return
+end
+
+if writefile then pcall(writefile, KEY_FILE, "") end
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "SimpleKeySystem"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = CoreGui
+
+local MainFrame = Instance.new("Frame")
+MainFrame.Size = UDim2.new(0, 300, 0, 260)
+MainFrame.Position = UDim2.new(0.5, -150, 0.5, -130)
+MainFrame.BackgroundColor3 = Color3.fromRGB(245, 230, 239)
+MainFrame.BorderSizePixel = 0
+MainFrame.Parent = ScreenGui
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 14)
+
+local ControlsFrame = Instance.new("Frame")
+ControlsFrame.Size = UDim2.new(0, 52, 0, 12)
+ControlsFrame.Position = UDim2.new(1, -68, 0, 16)
+ControlsFrame.BackgroundTransparency = 1
+ControlsFrame.Parent = MainFrame
+
+local function makeDot(xOffset, color)
+    local dot = Instance.new("Frame")
+    dot.Size = UDim2.new(0, 12, 0, 12)
+    dot.Position = UDim2.new(0, xOffset, 0, 0)
+    dot.BackgroundColor3 = color
+    dot.BorderSizePixel = 0
+    dot.Parent = ControlsFrame
+    Instance.new("UICorner", dot).CornerRadius = UDim.new(1, 0)
+end
+
+makeDot(0, Color3.fromRGB(40, 200, 64))
+makeDot(20, Color3.fromRGB(255, 190, 46))
+
+local CloseButton = Instance.new("TextButton")
+CloseButton.Size = UDim2.new(0, 12, 0, 12)
+CloseButton.Position = UDim2.new(0, 40, 0, 0)
+CloseButton.BackgroundColor3 = Color3.fromRGB(255, 95, 86)
+CloseButton.Text = ""
+CloseButton.BorderSizePixel = 0
+CloseButton.Parent = ControlsFrame
+Instance.new("UICorner", CloseButton).CornerRadius = UDim.new(1, 0)
+CloseButton.MouseButton1Click:Connect(function() ScreenGui:Destroy() end)
+
+local TitleLabel = Instance.new("TextLabel")
+TitleLabel.Size = UDim2.new(1, -80, 0, 40)
+TitleLabel.Position = UDim2.new(0, 16, 0, 4)
+TitleLabel.BackgroundTransparency = 1
+TitleLabel.Text = "Key System"
+TitleLabel.TextColor3 = Color3.fromRGB(20, 25, 35)
+TitleLabel.Font = Enum.Font.GothamBold
+TitleLabel.TextSize = 17
+TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+TitleLabel.Parent = MainFrame
+
+local KeyInput = Instance.new("TextBox")
+KeyInput.Size = UDim2.new(0, 260, 0, 40)
+KeyInput.Position = UDim2.new(0.5, -130, 0, 65)
+KeyInput.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+KeyInput.BorderSizePixel = 0
+KeyInput.Text = ""
+KeyInput.PlaceholderText = "Enter Key"
+KeyInput.PlaceholderColor3 = Color3.fromRGB(160, 165, 175)
+KeyInput.TextColor3 = Color3.fromRGB(30, 30, 35)
+KeyInput.Font = Enum.Font.Gotham
+KeyInput.TextSize = 15
+KeyInput.Parent = MainFrame
+Instance.new("UICorner", KeyInput).CornerRadius = UDim.new(0, 10)
+
+local CheckButton = Instance.new("TextButton")
+CheckButton.Size = UDim2.new(0, 260, 0, 42)
+CheckButton.AnchorPoint = Vector2.new(0.5, 0.5)
+CheckButton.Position = UDim2.new(0.5, 0, 0, 146)
+CheckButton.BackgroundColor3 = Color3.fromRGB(148, 0, 255)
+CheckButton.BorderSizePixel = 0
+CheckButton.Text = "Verify"
+CheckButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CheckButton.Font = Enum.Font.GothamBold
+CheckButton.TextSize = 15
+CheckButton.Parent = MainFrame
+Instance.new("UICorner", CheckButton).CornerRadius = UDim.new(0, 10)
+
+local GetKeyButton = Instance.new("TextButton")
+GetKeyButton.Size = UDim2.new(0, 260, 0, 42)
+GetKeyButton.Position = UDim2.new(0.5, -130, 0, 182)
+GetKeyButton.BackgroundColor3 = Color3.fromRGB(215, 230, 255)
+GetKeyButton.BorderSizePixel = 0
+GetKeyButton.Text = "Get Key"
+GetKeyButton.TextColor3 = Color3.fromRGB(0, 122, 255)
+GetKeyButton.Font = Enum.Font.GothamMedium
+GetKeyButton.TextSize = 15
+GetKeyButton.Parent = MainFrame
+Instance.new("UICorner", GetKeyButton).CornerRadius = UDim.new(0, 10)
+
+local dragging, dragInput, dragStart, startPos
+
+MainFrame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = MainFrame.Position
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then dragging = false end
+        end)
+    end
+end)
+
+MainFrame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then dragInput = input end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        local delta = input.Position - dragStart
+        MainFrame.Position = UDim2.new(
+            startPos.X.Scale, startPos.X.Offset + delta.X,
+            startPos.Y.Scale, startPos.Y.Offset + delta.Y
+        )
+    end
+end)
+
+CheckButton.MouseButton1Down:Connect(function()
+    TweenService:Create(CheckButton, TweenInfo.new(0.1, Enum.EasingStyle.Quad), {
+        Size = UDim2.new(0, 250, 0, 39)
+    }):Play()
+end)
+
+CheckButton.MouseButton1Click:Connect(function()
+    local pop = TweenService:Create(CheckButton, TweenInfo.new(0.15, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+        Size = UDim2.new(0, 260, 0, 42)
+    })
+    pop:Play()
+    pop.Completed:Wait()
+
+    local inputKey = KeyInput.Text:gsub("%s+", "")
+    CheckButton.Text = "Checking..."
+
+    if ValidateKey(inputKey) then
+        SaveKey(inputKey)
+        CheckButton.Text = "Success!"
+        TweenService:Create(CheckButton, TweenInfo.new(0.2), {
+            BackgroundColor3 = Color3.fromRGB(52, 199, 89)
+        }):Play()
+        task.wait(1)
+        ScreenGui:Destroy()
+        LoadMainScript()
+    else
+        CheckButton.Text = "Invalid Key"
+        TweenService:Create(CheckButton, TweenInfo.new(0.2), {
+            BackgroundColor3 = Color3.fromRGB(255, 59, 48)
+        }):Play()
+        task.wait(1.5)
+        CheckButton.Text = "Verify"
+        TweenService:Create(CheckButton, TweenInfo.new(0.2), {
+            BackgroundColor3 = Color3.fromRGB(148, 0, 255)
+        }):Play()
+    end
+end)
+
+GetKeyButton.MouseButton1Click:Connect(function()
+    if setclipboard then
+        setclipboard(WORK_INK_LINK)
+        GetKeyButton.Text = "Copied!"
+        task.wait(1.5)
+        GetKeyButton.Text = "Get Key"
+    end
+end)
