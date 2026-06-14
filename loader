@@ -1,0 +1,5 @@
+if game.PlaceId == 987654321 then
+    loadstring(game:HttpGet("https://getronin.xyz/loader.lua/Grow-A-Garden-2"))()
+else
+    print("Game Not Supported!")
+end
