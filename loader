@@ -4,7 +4,7 @@ local UserInputService = game:GetService("UserInputService")
 local CoreGui = game:GetService("CoreGui")
 
 local KEY_FILE = "roninhub_key.txt"
-local SCRIPT_URL = ""
+local SCRIPT_URL = "https://raw.githubusercontent.com/Ronin-Studios/Ronin-Hub/refs/heads/main/Grow-A-Garden-2"
 local WORK_INK_LINK = "https://work.ink/2DE4/ronin-hub-key-system"
 local VALIDATE_URL = "https://work.ink/_api/v2/token/isValid/"
 
