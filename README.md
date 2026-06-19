@@ -39,9 +39,9 @@ Ronin Hub is a multi-game Roblox script hub with a custom UI built for both desk
 
 ## How to Use
 
-1. Join the [Discord](https://discord.gg/uuaFAm6AdE) and get a key
+1. Open the [Official Website](https://getronin.xyz) and get the loadstring.
 2. Open your executor and run the loader
-3. Paste your key and press **Check Key**
+3. Get your key, paste it and press **Check Key**
 4. The hub loads automatically for whatever game you're in
 
 **Loader:**
