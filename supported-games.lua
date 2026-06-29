@@ -13,6 +13,14 @@ return {
             DisabledMessage = "Grow a Garden 2 support is being updated, check back soon.",
         },
 
+        {
+            Name   = "99 Nights in the Forest",
+            Ids    = { 7326934954 }, 
+            Script = "https://raw.githubusercontent.com/Ronin-Studios/Ronin-Hub/refs/heads/main/games/99-Nights-in-the-Forest.lua",
+            Disabled = false,
+            DisabledMessage = "99 Nights in the Forest support is being updated, check back soon.",
+        },
+
     
     },
 }
